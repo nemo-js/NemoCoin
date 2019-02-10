@@ -112,7 +112,6 @@ export class BlockChain {
         console.log("Block succesfully mined");
 
         this.pendingTransactions = [];
-
     }
 
     addTransaction(tx: Transaction) {
@@ -139,6 +138,7 @@ export class BlockChain {
                 }
             }
         }
+
         return balance;
     }
 
