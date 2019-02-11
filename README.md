@@ -7,5 +7,6 @@ For education purposes only. This is by no means a complete implementation and i
 Based on [Savjee/SavjeeCoin](https://github.com/Savjee/SavjeeCoin)
 
 ## Instructions
+* npm install
 * tsc
 * node dist\main.js
