@@ -1,0 +1,31 @@
+{
+  "name": "nemocoin",
+  "version": "1.0.0",
+  "description": "A very simple implemetation of blockchain in typescript",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nemo-js/NemoCoin.git"
+  },
+  "keywords": [
+    "blockchain"
+  ],
+  "author": "Nemo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nemo-js/NemoCoin/issues"
+  },
+  "homepage": "https://github.com/nemo-js/NemoCoin#readme",
+  "dependencies": {
+    "@types/node": "^10.12.24",
+    "body-parser": "^1.18.3",
+    "compression": "^1.7.3",
+    "crypto-js": "^3.1.9-1",
+    "elliptic": "^6.4.1",
+    "express": "^4.16.4",
+    "save": "^2.3.3"
+  }
+}
