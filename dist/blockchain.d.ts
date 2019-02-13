@@ -15,8 +15,8 @@ export declare class BlockChain {
     private difficulty;
     private miningReward;
     constructor();
-    private createGenesisBlock();
-    private getLatestBlock();
+    private createGenesisBlock;
+    private getLatestBlock;
     minePendingTransactions(rewardAddress: string): void;
     addTransaction(tx: Transaction): void;
     getBalanceOfAddress(addr: string): number;
