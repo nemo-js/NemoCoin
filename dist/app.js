@@ -15,7 +15,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const privateKey = "98d679b9bd734a39dda428bd7efa30db7e00d160aa17e12f73f03a9f9bfd6ff9";
 state_1.State.init(privateKey);
 app.post("/transaction/add", api_1.NemoCoinAPI.addTransaction);
-app.post("/ui/transaction/add", ui_1.UserInterfaceAPI.addTransaction);
+app.post("/ui/getBalance", ui_1.UserInterfaceAPI.getBalance);
+app.post("/ui/money/transfer", ui_1.UserInterfaceAPI.transferMoney);
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send(err.message);

@@ -20,7 +20,8 @@ State.init(privateKey);
 
 app.post("/transaction/add", NemoCoinAPI.addTransaction);
 
-app.post("/ui/transaction/add", UserInterfaceAPI.addTransaction);
+app.post("/ui/getBalance", UserInterfaceAPI.getBalance);
+app.post("/ui/money/transfer", UserInterfaceAPI.transferMoney);
 
 app.use((err: any, req: any, res: any, next: any) => {
     console.error(err.stack);
