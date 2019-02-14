@@ -4,12 +4,16 @@ import { State } from "../state";
 
 export class NemoCoinAPI {
 
-    static newTransaction(req: Request, res: Response) {
+    static addTransaction(req: Request, res: Response) {
+        // todo: early exit if already added
         const tx = new Transaction(req.body.from, req.body.to, req.body.amount);
         tx.signature = req.body.signature;
         tx.comment = req.body.comment;
         
         State.chain.addTransaction(tx);
+
+        // todo: dont send aggain to sende
+        State.sendTransaction(tx);
 
         res.send(tx);
     }
