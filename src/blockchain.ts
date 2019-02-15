@@ -76,7 +76,6 @@ class Block {
 }
 
 export class BlockChain {
-
     pendingTransactions: Transaction[];
     private chain: Block[];
     private difficulty = 2;
@@ -97,6 +96,17 @@ export class BlockChain {
 
     private getLatestBlock(): Block {
         return this.chain[this.chain.length - 1];
+    }
+
+    hasTransaction(signature: string, blockLookBack: number): any {
+        for (let i = this.chain.length - 1; i >= 0 && i > this.chain.length - blockLookBack; i--) {
+            const block = this.chain[i];
+            if (block.transactions.find(t => t.signature == signature) != null) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     minePendingTransactions(rewardAddress: string) {
