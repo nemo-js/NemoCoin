@@ -31,4 +31,8 @@ export class NemoCoinAPI {
         res.send(tx);
     }
 
+    static nodeJoined(req: Request, res: Response) {
+        State.addNode(req.body.addr);
+    }
+
 }

@@ -24,13 +24,26 @@ export class State {
     }
 
     static loadStaticNeighbours() {
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 1; i++) {
             const addr = "http://localhost:" + (3000 + i);
             if (addr == this.currentWebAddr) {
                 continue;
             }
             this.neighbors.push(new Neighbour(addr));
         }
+    }
+
+    static joinNetwork() {
+        State.postToNeighbours(100, "/node/new", { addr: State.currentWebAddr })
+    }
+
+    static addNode(addr: string): any {
+        this.neighbors = this.neighbors.filter(n => n.isDown == false);
+        if (this.neighbors.find(n => n.address == addr)) {
+            return;
+        }
+        console.log("Adding new node!", addr);
+        this.neighbors.push(new Neighbour(addr));
     }
 
     static sendTransaction(tx1: Transaction): void {
@@ -51,8 +64,13 @@ export class State {
                 console.log("no more neighbours");
                 break;
             }
+
             
             const node = upNodes[i];
+            if (State.currentWebAddr == node.address) {
+                continue;
+            }
+
             this.postToNeighbour(node, path, data)
                 .catch(() => {
                     node.isDown = true;
