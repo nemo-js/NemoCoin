@@ -12,7 +12,7 @@ class UserInterfaceAPI {
         res.send("ok");
     }
     static getBalance(req, res) {
-        res.send(state_1.State.chain.getBalanceOfAddress(state_1.State.myWalletAddress));
+        res.send({ balance: state_1.State.chain.getBalanceOfAddress(state_1.State.myWalletAddress) });
     }
 }
 exports.UserInterfaceAPI = UserInterfaceAPI;

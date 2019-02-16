@@ -6,16 +6,27 @@ const ui_1 = require("./controller/ui");
 var express = require('express');
 var compression = require('compression');
 var bodyParser = require('body-parser');
+const commandArgs = process.argv.slice(2);
+const args = {};
+for (let i = 0; i < commandArgs.length; i++) {
+    args[commandArgs[i].trim()] = commandArgs[i + 1];
+    i++;
+}
 const app = express();
-app.set("port", process.env.PORT || 3000);
+let port = parseInt(args["-p"]);
+if (isNaN(port)) {
+    port = 3000;
+}
+app.set("port", port);
 app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 // todo: get from config file
 const privateKey = "98d679b9bd734a39dda428bd7efa30db7e00d160aa17e12f73f03a9f9bfd6ff9";
-state_1.State.init(privateKey);
+const myAddr = "http://localhost:" + port;
+state_1.State.init(privateKey, myAddr);
 app.post("/transaction/add", api_1.NemoCoinAPI.addTransaction);
-app.post("/ui/getBalance", ui_1.UserInterfaceAPI.getBalance);
+app.get("/ui/getBalance", ui_1.UserInterfaceAPI.getBalance);
 app.post("/ui/money/transfer", ui_1.UserInterfaceAPI.transferMoney);
 app.use((err, req, res, next) => {
     console.error(err.stack);

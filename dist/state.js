@@ -17,14 +17,25 @@ const request_1 = __importDefault(require("request"));
 //const EC = require("elliptic").ec;
 //const ec = new EC("secp256k1");
 class State {
-    static init(privateKey) {
+    static init(privateKey, currentWebAddr) {
         this.chain = new blockchain_1.BlockChain();
         this.neighbors = [];
         this.myKey = this.keyGen.keyFromPrivate(privateKey);
         this.myWalletAddress = this.myKey.getPublic("hex");
+        this.currentWebAddr = currentWebAddr;
+        this.loadStaticNeighbours();
+    }
+    static loadStaticNeighbours() {
+        for (let i = 0; i < 4; i++) {
+            const addr = "http://localhost:" + (3000 + i);
+            if (addr == this.currentWebAddr) {
+                continue;
+            }
+            this.neighbors.push(new Neighbour(addr));
+        }
     }
     static sendTransaction(tx1) {
-        this.postToNeighbours(20, "/api/add", {
+        this.postToNeighbours(20, "/transaction/add", {
             from: tx1.from,
             to: tx1.to,
             amount: tx1.amount,
@@ -33,23 +44,31 @@ class State {
         });
     }
     static postToNeighbours(count, path, data) {
+        const upNodes = this.neighbors.filter(n => n.isDown == false);
         for (let i = 0; i < count; i++) {
-            if (this.neighbors.length <= i) {
-                console.log("no more neighbours: " + path);
+            if (upNodes.length <= i) {
+                console.log("no more neighbours");
                 break;
             }
-            this.postToNeighbour(this.neighbors[i], path, data);
+            const node = upNodes[i];
+            this.postToNeighbour(node, path, data)
+                .catch(() => {
+                node.isDown = true;
+            });
         }
     }
     static postToNeighbour(n, path, data) {
         return __awaiter(this, void 0, void 0, function* () {
             return new Promise(function (resolve, reject) {
-                const addr = n.address + "/" + path;
+                const addr = n.address + path;
+                console.log("sending to...", n.address);
                 request_1.default.post(addr, { json: data }, (error, response, body) => {
                     if (!error && response.statusCode == 200) {
+                        console.log("success to...", n.address);
                         resolve();
                     }
                     else {
+                        console.log("falied to...", n.address);
                         reject();
                     }
                 });
@@ -62,6 +81,7 @@ exports.State = State;
 class Neighbour {
     constructor(address) {
         this.address = address;
+        this.isDown = false;
     }
 }
 //# sourceMappingURL=state.js.map
