@@ -44,28 +44,34 @@ export class State {
     }
 
     private static postToNeighbours(count: number, path: string, data: any) {
+        const upNodes = this.neighbors.filter(n => n.isDown == false);
+
         for (let i = 0; i < count; i++) {
-            if (this.neighbors.length <= i) {
-                console.log("no more neighbours: " + path);
+            if (upNodes.length <= i) {
+                console.log("no more neighbours");
                 break;
             }
             
-            this.postToNeighbour(this.neighbors[i], path, data);
+            const node = upNodes[i];
+            this.postToNeighbour(node, path, data)
+                .catch(() => {
+                    node.isDown = true;
+                });
         }
     }
 
     private static async postToNeighbour(n: Neighbour, path: string, data: any) {
         return new Promise(function(resolve, reject){
             const addr = n.address + path;
-            console.log("sending to...",  addr);
+            console.log("sending to...",  n.address);
             request.post(addr, { json: data }, 
                 (error: any, response: request.Response, body: any) => {
                     if (!error && response.statusCode == 200) {
+                        console.log("success to...",  n.address);
                         resolve();
-                        console.log("success to...",  addr);
                     } else {
+                        console.log("falied to...",  n.address);
                         reject();
-                        console.log("falied to...",  addr);
                     }
             });
         });
@@ -73,6 +79,8 @@ export class State {
 }
 
 class Neighbour {
+
+    public isDown = false;
 
     constructor(public address: string) {
 

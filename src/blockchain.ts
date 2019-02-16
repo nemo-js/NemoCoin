@@ -99,6 +99,10 @@ export class BlockChain {
     }
 
     hasTransaction(signature: string, blockLookBack: number): any {
+        if (this.pendingTransactions.find(t => t.signature == signature) != null) {
+            return true;
+        }
+
         for (let i = this.chain.length - 1; i >= 0 && i > this.chain.length - blockLookBack; i--) {
             const block = this.chain[i];
             if (block.transactions.find(t => t.signature == signature) != null) {

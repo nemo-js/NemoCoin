@@ -11,6 +11,8 @@ export class NemoCoinAPI {
             return;
         }
 
+        console.log("New transaction!", req.body.signature);
+
         if (State.chain.hasTransaction(req.body.signature, 3)) {
             console.log("Transacion already exists");
             res.send("rejected");
@@ -22,7 +24,7 @@ export class NemoCoinAPI {
         tx.comment = req.body.comment;
         
         State.chain.addTransaction(tx);
-
+        console.log("added transaction", tx.signature);
         // todo: dont send aggain to sender
         State.sendTransaction(tx);
 
