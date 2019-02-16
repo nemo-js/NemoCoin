@@ -27,11 +27,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // todo: get from config file
 const privateKey = "98d679b9bd734a39dda428bd7efa30db7e00d160aa17e12f73f03a9f9bfd6ff9";
-State.init(privateKey);
+const myAddr = "http://localhost:" + port;
+State.init(privateKey, myAddr);
 
 app.post("/transaction/add", NemoCoinAPI.addTransaction);
 
-app.post("/ui/getBalance", UserInterfaceAPI.getBalance);
+app.get("/ui/getBalance", UserInterfaceAPI.getBalance);
 app.post("/ui/money/transfer", UserInterfaceAPI.transferMoney);
 
 app.use((err: any, req: any, res: any, next: any) => {

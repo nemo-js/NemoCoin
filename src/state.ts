@@ -12,16 +12,29 @@ export class State {
     private static keyGen = new ec("secp256k1");
     static myKey: ec.KeyPair;
     static myWalletAddress: string;
+    static currentWebAddr: string;
 
-    static init(privateKey: string) {
+    static init(privateKey: string, currentWebAddr: string) {
         this.chain = new BlockChain();
         this.neighbors = [];
         this.myKey = this.keyGen.keyFromPrivate(privateKey);
         this.myWalletAddress = this.myKey.getPublic("hex");
+        this.currentWebAddr = currentWebAddr;
+        this.loadStaticNeighbours();
+    }
+
+    static loadStaticNeighbours() {
+        for (let i = 0; i < 4; i++) {
+            const addr = "http://localhost:" + (3000 + i);
+            if (addr == this.currentWebAddr) {
+                continue;
+            }
+            this.neighbors.push(new Neighbour(addr));
+        }
     }
 
     static sendTransaction(tx1: Transaction): void {
-        this.postToNeighbours(20, "/api/add", {
+        this.postToNeighbours(20, "/transaction/add", {
             from: tx1.from,
             to: tx1.to,
             amount: tx1.amount,
@@ -43,14 +56,16 @@ export class State {
 
     private static async postToNeighbour(n: Neighbour, path: string, data: any) {
         return new Promise(function(resolve, reject){
-            const addr = n.address + "/" + path;
-
+            const addr = n.address + path;
+            console.log("sending to...",  addr);
             request.post(addr, { json: data }, 
                 (error: any, response: request.Response, body: any) => {
                     if (!error && response.statusCode == 200) {
                         resolve();
+                        console.log("success to...",  addr);
                     } else {
                         reject();
+                        console.log("falied to...",  addr);
                     }
             });
         });

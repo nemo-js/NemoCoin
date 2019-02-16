@@ -12,7 +12,7 @@ export class NemoCoinAPI {
         }
 
         if (State.chain.hasTransaction(req.body.signature, 3)) {
-            console.log("No signature...");
+            console.log("Transacion already exists");
             res.send("rejected");
             return;
         }
