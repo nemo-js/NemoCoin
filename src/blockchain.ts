@@ -5,9 +5,10 @@ const ec = new EC("secp256k1");
 export class Transaction {
     
     public signature: string = "";
+    public timestamp: number = 0;
 
     constructor(public from: string, public to: string, public amount: number, public comment: string = "") {
-
+        this.timestamp = new Date().getTime();
     }
 
     calculateHash(): string {

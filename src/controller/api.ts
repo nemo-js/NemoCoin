@@ -20,6 +20,7 @@ export class NemoCoinAPI {
         }
 
         const tx = new Transaction(req.body.from, req.body.to, req.body.amount);
+        tx.timestamp = req.body.timestamp;
         tx.signature = req.body.signature;
         tx.comment = req.body.comment;
         
