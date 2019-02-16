@@ -6,9 +6,20 @@ var express = require('express');
 var compression = require('compression');
 var bodyParser = require('body-parser');
 
+const commandArgs = process.argv.slice(2);
+const args: any = { };
+for (let i = 0; i < commandArgs.length; i++) {
+    args[commandArgs[i].trim()] = commandArgs[i + 1];
+    i++;
+}
+
 const app = express();
 
-app.set("port", process.env.PORT || 3000);
+let port = parseInt(args["-p"]);
+if (isNaN(port)) {
+    port = 3000;
+}
+app.set("port", port);
 
 app.use(compression());
 app.use(bodyParser.json());
