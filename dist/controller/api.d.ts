@@ -1,4 +1,0 @@
-import { Response, Request } from "express";
-export declare class NemoCoinAPI {
-    static addTransaction(req: Request, res: Response): void;
-}
