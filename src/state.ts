@@ -1,23 +1,25 @@
 import { BlockChain, Transaction } from "./blockchain";
 import { ec } from "elliptic";
 import request from "request";
+import { Profile } from "./profile";
 
-//const EC = require("elliptic").ec;
-//const ec = new EC("secp256k1");
 export class State {
     public static chain: BlockChain;
     public static neighbors: Neighbour[];
     public static wallet: string;
+    public static profile: Profile;
 
     private static keyGen = new ec("secp256k1");
     static myKey: ec.KeyPair;
     static myWalletAddress: string;
     static currentWebAddr: string;
 
-    static init(privateKey: string, currentWebAddr: string) {
+    static init(profileName: string, currentWebAddr: string) {
+        this.profile = new Profile();
+        this.profile.load(profileName);
         this.chain = new BlockChain();
         this.neighbors = [];
-        this.myKey = this.keyGen.keyFromPrivate(privateKey);
+        this.myKey = this.keyGen.keyFromPrivate(this.profile.key);
         this.myWalletAddress = this.myKey.getPublic("hex");
         this.currentWebAddr = currentWebAddr;
         this.loadStaticNeighbours();

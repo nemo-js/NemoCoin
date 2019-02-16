@@ -26,11 +26,6 @@ function connect(port: number) {
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true }));
 
-    // todo: get from config file
-    const privateKey = "98d679b9bd734a39dda428bd7efa30db7e00d160aa17e12f73f03a9f9bfd6ff9";
-    const myAddr = "http://localhost:" + port;
-    State.init(privateKey, myAddr);
-
     app.post("/transaction/add", NemoCoinAPI.addTransaction);
     app.post("/node/new", NemoCoinAPI.nodeJoined);
 
@@ -48,7 +43,6 @@ function connect(port: number) {
             app.get("port"),
             app.get("env")
         );
-        console.log("  Press CTRL-C to stop\n");
     });
 }
 
@@ -59,6 +53,14 @@ function init() {
     if (isNaN(port)) {
         port = 3000;
     }
+
+    if (args["-u"] == null) {
+        console.log("Select a profile with -u argument");
+        process.exit();
+    }
+
+    const myAddr = "http://localhost:" + port;
+    State.init(args["-u"], myAddr);
 
     connect(port);
 
