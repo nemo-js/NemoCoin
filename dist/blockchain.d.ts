@@ -18,7 +18,9 @@ export declare class BlockChain {
     constructor();
     private createGenesisBlock;
     private getLatestBlock;
+    getBlockChain(): any;
     hasTransaction(signature: string, blockLookBack: number): any;
+    checkForMining(rewardAddress: string): any;
     minePendingTransactions(rewardAddress: string): void;
     addTransaction(tx: Transaction): void;
     getBalanceOfAddress(addr: string): number;

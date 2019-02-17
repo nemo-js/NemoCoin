@@ -23,14 +23,16 @@ function connect(port) {
     app.use(bodyParser.urlencoded({ extended: true }));
     app.post("/transaction/add", api_1.NemoCoinAPI.addTransaction);
     app.post("/node/new", api_1.NemoCoinAPI.nodeJoined);
+    app.get("/chain", api_1.NemoCoinAPI.getChain);
     app.get("/ui/balance", ui_1.UserInterfaceAPI.getBalance);
     app.get("/ui/address", ui_1.UserInterfaceAPI.getAddress);
+    app.get("/ui/neighbours", ui_1.UserInterfaceAPI.getNeighbours);
     app.post("/ui/money/transfer", ui_1.UserInterfaceAPI.transferMoney);
     app.use((err, req, res, next) => {
         console.error(err.stack);
         res.status(500).send(err.message);
     });
-    const server = app.listen(app.get("port"), () => {
+    app.listen(app.get("port"), () => {
         console.log("  App is running at http://localhost:%d in %s mode", app.get("port"), app.get("env"));
     });
 }

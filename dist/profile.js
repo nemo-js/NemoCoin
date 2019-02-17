@@ -12,7 +12,7 @@ class Profile {
         }
     }
     load(name) {
-        const path = this.getProfilePath();
+        const path = this.getProfilePath(name);
         if (!fs_1.existsSync(path)) {
             this.create(name);
             return;
@@ -31,13 +31,13 @@ class Profile {
         if (!fs_1.existsSync(Profile.dir + "\\" + this.name)) {
             fs_1.mkdirSync(Profile.dir + "\\" + this.name);
         }
-        fs_1.writeFileSync(this.getProfilePath(), JSON.stringify({
+        fs_1.writeFileSync(this.getProfilePath(this.name), JSON.stringify({
             name: this.name,
             key: this.key
         }), { encoding: "utf8" });
     }
-    getProfilePath() {
-        return Profile.dir + "\\" + this.name + "\\profile";
+    getProfilePath(name) {
+        return Profile.dir + "\\" + name + "\\profile";
     }
 }
 Profile.dir = __dirname + "\\.profile";

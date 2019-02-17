@@ -17,6 +17,9 @@ class UserInterfaceAPI {
     static getAddress(req, res) {
         res.send({ address: state_1.State.myWalletAddress });
     }
+    static getNeighbours(req, res) {
+        res.send(state_1.State.getNeighbours());
+    }
 }
 exports.UserInterfaceAPI = UserInterfaceAPI;
 //# sourceMappingURL=ui.js.map

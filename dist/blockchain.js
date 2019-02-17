@@ -14,7 +14,7 @@ class Transaction {
         this.timestamp = new Date().getTime();
     }
     calculateHash() {
-        return SHA256(this.from + this.to + this.amount + this.comment).toString();
+        return SHA256(this.from + this.to + this.amount + this.comment + this.timestamp).toString();
     }
     signTransaction(signingKey) {
         if (signingKey.getPublic("hex") !== this.from) {
@@ -67,7 +67,7 @@ class Block {
 class BlockChain {
     constructor() {
         this.difficulty = 2;
-        this.miningReward = 100;
+        this.miningReward = this.difficulty * 10;
         this.chain = [this.createGenesisBlock()];
         this.pendingTransactions = [];
         this.createGenesisBlock();
@@ -81,6 +81,9 @@ class BlockChain {
     getLatestBlock() {
         return this.chain[this.chain.length - 1];
     }
+    getBlockChain() {
+        return JSON.parse(JSON.stringify(this.chain));
+    }
     hasTransaction(signature, blockLookBack) {
         if (this.pendingTransactions.find(t => t.signature == signature) != null) {
             return true;
@@ -92,6 +95,12 @@ class BlockChain {
             }
         }
         return false;
+    }
+    checkForMining(rewardAddress) {
+        if (this.pendingTransactions.length < 1) {
+            return;
+        }
+        this.minePendingTransactions(rewardAddress);
     }
     minePendingTransactions(rewardAddress) {
         //add reward transaction

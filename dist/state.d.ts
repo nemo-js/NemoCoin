@@ -3,24 +3,17 @@ import { ec } from "elliptic";
 import { Profile } from "./profile";
 export declare class State {
     static chain: BlockChain;
-    static neighbors: Neighbour[];
     static wallet: string;
     static profile: Profile;
+    private static network;
     private static keyGen;
     static myKey: ec.KeyPair;
     static myWalletAddress: string;
     static currentWebAddr: string;
     static init(profileName: string, currentWebAddr: string): void;
     static loadStaticNeighbours(): void;
+    static getNeighbours(): any;
     static joinNetwork(): void;
     static addNode(addr: string): any;
-    static sendTransaction(tx1: Transaction): void;
-    private static postToNeighbours;
-    private static postToNeighbour;
+    static sendTransaction(tx: Transaction): void;
 }
-declare class Neighbour {
-    address: string;
-    isDown: boolean;
-    constructor(address: string);
-}
-export {};
