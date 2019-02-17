@@ -1,14 +1,15 @@
 import { BlockChain, Transaction } from "./blockchain";
 import { ec } from "elliptic";
-import request from "request";
 import { Profile } from "./profile";
+import { P2P } from "./p2p";
 
 export class State {
+
     public static chain: BlockChain;
-    public static neighbors: Neighbour[];
     public static wallet: string;
     public static profile: Profile;
 
+    private static network: P2P;
     private static keyGen = new ec("secp256k1");
     static myKey: ec.KeyPair;
     static myWalletAddress: string;
@@ -18,10 +19,10 @@ export class State {
         this.profile = new Profile();
         this.profile.load(profileName);
         this.chain = new BlockChain();
-        this.neighbors = [];
         this.myKey = this.keyGen.keyFromPrivate(this.profile.key);
         this.myWalletAddress = this.myKey.getPublic("hex");
         this.currentWebAddr = currentWebAddr;
+        this.network = new P2P(currentWebAddr);
         this.loadStaticNeighbours();
     }
 
@@ -31,88 +32,30 @@ export class State {
             if (addr == this.currentWebAddr) {
                 continue;
             }
-            this.neighbors.push(new Neighbour(addr));
+            this.network.addNode(addr, false);
         }
+    }
+
+    static getNeighbours(): any {
+        return State.network.getNodes();
     }
 
     static joinNetwork() {
-        State.postToNeighbours(100, "/node/new", { addr: State.currentWebAddr });
+        State.network.postToNeighbours(100, "/node/new", { addr: State.currentWebAddr }, []);
     }
 
     static addNode(addr: string): any {
-        this.neighbors = this.neighbors.filter(n => n.isDown == false);
-        
-        if (addr == State.currentWebAddr) {
-            return;
-        }
-
-        if (this.neighbors.length > 25) {
-            return;
-        }
-        
-        if (this.neighbors.find(n => n.address == addr)) {
-            return;
-        }
-
-        console.log("Adding new node!", addr);
-        this.neighbors.push(new Neighbour(addr));
-
-        State.postToNeighbours(100, "/node/new", { addr: addr });
+        this.network.addNode(addr);
     }
 
-    static sendTransaction(tx1: Transaction): void {
-        this.postToNeighbours(20, "/transaction/add", {
-            from: tx1.from,
-            to: tx1.to,
-            amount: tx1.amount,
-            comment: tx1.comment,
-            signature: tx1.signature
-        });
-    }
-
-    private static postToNeighbours(count: number, path: string, data: any) {
-        const upNodes = this.neighbors.filter(n => n.isDown == false);
-
-        for (let i = 0; i < count; i++) {
-            if (upNodes.length <= i) {
-                break;
-            }
-
-            const node = upNodes[i];
-            if (State.currentWebAddr == node.address) {
-                continue;
-            }
-
-            this.postToNeighbour(node, path, data)
-                .catch(() => {
-                    node.isDown = true;
-                });
-        }
-    }
-
-    private static async postToNeighbour(n: Neighbour, path: string, data: any) {
-        return new Promise(function(resolve, reject){
-            const addr = n.address + path;
-
-            request.post(addr, { json: data }, 
-                (error: any, response: request.Response, body: any) => {
-                    if (!error && response.statusCode == 200) {
-                        console.log("success to...",  n.address);
-                        resolve();
-                    } else {
-                        console.log("falied to...",  n.address);
-                        reject();
-                    }
-            });
-        });
-    }
-}
-
-class Neighbour {
-
-    public isDown = false;
-
-    constructor(public address: string) {
-
+    static sendTransaction(tx: Transaction): void {
+        this.network.postToNeighbours(20, "/transaction/add", {
+            from: tx.from,
+            to: tx.to,
+            amount: tx.amount,
+            comment: tx.comment,
+            signature: tx.signature,
+            timestamp: tx.timestamp
+        }, []);
     }
 }

@@ -12,7 +12,7 @@ export class Transaction {
     }
 
     calculateHash(): string {
-        return SHA256(this.from + this.to + this.amount + this.comment).toString();
+        return SHA256(this.from + this.to + this.amount + this.comment + this.timestamp).toString();
     }
 
     signTransaction(signingKey: any): void {
@@ -80,7 +80,7 @@ export class BlockChain {
     pendingTransactions: Transaction[];
     private chain: Block[];
     private difficulty = 2;
-    private miningReward = 22;
+    private miningReward = this.difficulty * 10;
 
     constructor() {
         this.chain = [this.createGenesisBlock()];

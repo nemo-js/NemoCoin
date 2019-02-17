@@ -1,5 +1,5 @@
 import { Response, Request, NextFunction } from "express";
-import { BlockChain, Transaction } from "../blockchain";
+import { Transaction } from "../blockchain";
 import { State } from "../state";
 
 export class UserInterfaceAPI {
@@ -24,7 +24,7 @@ export class UserInterfaceAPI {
     }
 
     static getNeighbours(req: Request, res: Response) {
-        res.send(State.neighbors.map(n => n.address));
+        res.send(State.getNeighbours());
     }
 
 }

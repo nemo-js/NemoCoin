@@ -24,13 +24,18 @@ export class NemoCoinAPI {
         tx.signature = req.body.signature;
         tx.comment = req.body.comment;
         
-        State.chain.addTransaction(tx);
-        console.log("added transaction", tx.signature);
-        // todo: dont send aggain to sender
-        State.sendTransaction(tx);
-        res.send(tx);
+        try {
+            State.chain.addTransaction(tx);
+            console.log("added transaction", tx.signature);
+            // todo: dont send aggain to sender
+            State.sendTransaction(tx);
+            res.send(tx);
 
-        State.chain.checkForMining(State.myWalletAddress);
+            State.chain.checkForMining(State.myWalletAddress);
+        } catch (e) {
+            console.log(e)
+            res.send("failed");
+        }
     }
 
     static nodeJoined(req: Request, res: Response) {
