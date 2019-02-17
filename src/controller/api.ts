@@ -28,12 +28,17 @@ export class NemoCoinAPI {
         console.log("added transaction", tx.signature);
         // todo: dont send aggain to sender
         State.sendTransaction(tx);
-
         res.send(tx);
+
+        State.chain.checkForMining(State.myWalletAddress);
     }
 
     static nodeJoined(req: Request, res: Response) {
         State.addNode(req.body.addr);
+    }
+
+    static getChain(req: Request, res: Response): any {
+        res.send(State.chain.getBlockChain());
     }
 
 }

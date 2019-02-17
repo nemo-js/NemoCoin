@@ -80,7 +80,7 @@ export class BlockChain {
     pendingTransactions: Transaction[];
     private chain: Block[];
     private difficulty = 2;
-    private miningReward = 100;
+    private miningReward = 22;
 
     constructor() {
         this.chain = [this.createGenesisBlock()];
@@ -99,6 +99,10 @@ export class BlockChain {
         return this.chain[this.chain.length - 1];
     }
 
+    getBlockChain(): any {
+        return JSON.parse(JSON.stringify(this.chain));
+    }
+
     hasTransaction(signature: string, blockLookBack: number): any {
         if (this.pendingTransactions.find(t => t.signature == signature) != null) {
             return true;
@@ -112,6 +116,14 @@ export class BlockChain {
         }
 
         return false;
+    }
+
+    checkForMining(rewardAddress: string): any {
+        if (this.pendingTransactions.length < 1) {
+            return;
+        }
+
+        this.minePendingTransactions(rewardAddress);
     }
 
     minePendingTransactions(rewardAddress: string) {

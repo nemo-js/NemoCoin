@@ -40,14 +40,20 @@ export class State {
     }
 
     static addNode(addr: string): any {
+        this.neighbors = this.neighbors.filter(n => n.isDown == false);
+        
         if (addr == State.currentWebAddr) {
             return;
         }
-        this.neighbors = this.neighbors.filter(n => n.isDown == false);
-        if (this.neighbors.find(n => n.address == addr)) {
-            console.log("Node allready exists", addr);
+
+        if (this.neighbors.length > 25) {
             return;
         }
+        
+        if (this.neighbors.find(n => n.address == addr)) {
+            return;
+        }
+
         console.log("Adding new node!", addr);
         this.neighbors.push(new Neighbour(addr));
 
@@ -69,11 +75,9 @@ export class State {
 
         for (let i = 0; i < count; i++) {
             if (upNodes.length <= i) {
-                console.log("no more neighbours");
                 break;
             }
 
-            
             const node = upNodes[i];
             if (State.currentWebAddr == node.address) {
                 continue;
@@ -89,7 +93,7 @@ export class State {
     private static async postToNeighbour(n: Neighbour, path: string, data: any) {
         return new Promise(function(resolve, reject){
             const addr = n.address + path;
-            console.log("sending to...",  n.address);
+
             request.post(addr, { json: data }, 
                 (error: any, response: request.Response, body: any) => {
                     if (!error && response.statusCode == 200) {

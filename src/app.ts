@@ -28,6 +28,7 @@ function connect(port: number) {
 
     app.post("/transaction/add", NemoCoinAPI.addTransaction);
     app.post("/node/new", NemoCoinAPI.nodeJoined);
+    app.get("/chain", NemoCoinAPI.getChain);
 
     app.get("/ui/balance", UserInterfaceAPI.getBalance);
     app.get("/ui/address", UserInterfaceAPI.getAddress);
