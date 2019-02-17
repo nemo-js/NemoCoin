@@ -36,16 +36,22 @@ export class State {
     }
 
     static joinNetwork() {
-        State.postToNeighbours(100, "/node/new", { addr: State.currentWebAddr })
+        State.postToNeighbours(100, "/node/new", { addr: State.currentWebAddr });
     }
 
     static addNode(addr: string): any {
+        if (addr == State.currentWebAddr) {
+            return;
+        }
         this.neighbors = this.neighbors.filter(n => n.isDown == false);
         if (this.neighbors.find(n => n.address == addr)) {
+            console.log("Node allready exists", addr);
             return;
         }
         console.log("Adding new node!", addr);
         this.neighbors.push(new Neighbour(addr));
+
+        State.postToNeighbours(100, "/node/new", { addr: addr });
     }
 
     static sendTransaction(tx1: Transaction): void {

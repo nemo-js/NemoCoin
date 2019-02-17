@@ -23,4 +23,8 @@ export class UserInterfaceAPI {
         res.send({ address: State.myWalletAddress });
     }
 
+    static getNeighbours(req: Request, res: Response) {
+        res.send(State.neighbors.map(n => n.address));
+    }
+
 }

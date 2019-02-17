@@ -31,6 +31,7 @@ function connect(port: number) {
 
     app.get("/ui/balance", UserInterfaceAPI.getBalance);
     app.get("/ui/address", UserInterfaceAPI.getAddress);
+    app.get("/ui/neighbours", UserInterfaceAPI.getNeighbours);
     app.post("/ui/money/transfer", UserInterfaceAPI.transferMoney);
 
     app.use((err: any, req: any, res: any, next: any) => {
@@ -38,7 +39,7 @@ function connect(port: number) {
         res.status(500).send(err.message);
     });
 
-    const server = app.listen(app.get("port"), () => {
+    app.listen(app.get("port"), () => {
         console.log(
             "  App is running at http://localhost:%d in %s mode",
             app.get("port"),
