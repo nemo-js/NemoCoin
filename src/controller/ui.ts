@@ -5,7 +5,11 @@ import { State } from "../state";
 export class UserInterfaceAPI {
 
     static transferMoney(req: Request, res: Response) {
-        const tx = new Transaction(State.myWalletAddress, req.body.to, parseInt(req.body.amount));
+        const transferAmount = parseInt(req.body.amount);
+        if (transferAmount > State.chain.getBalanceOfAddress(State.myWalletAddress)) {
+            throw new Error("Not enough balance to complete transaction");
+        }
+        const tx = new Transaction(State.myWalletAddress, req.body.to, transferAmount);
         tx.comment = req.body.comment;
         tx.signTransaction(State.myKey);
         State.chain.addTransaction(tx);

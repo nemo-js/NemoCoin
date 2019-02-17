@@ -4,7 +4,11 @@ const blockchain_1 = require("../blockchain");
 const state_1 = require("../state");
 class UserInterfaceAPI {
     static transferMoney(req, res) {
-        const tx = new blockchain_1.Transaction(state_1.State.myWalletAddress, req.body.to, parseInt(req.body.amount));
+        const transferAmount = parseInt(req.body.amount);
+        if (transferAmount > state_1.State.chain.getBalanceOfAddress(state_1.State.myWalletAddress)) {
+            throw new Error("Not enough balance to complete transaction");
+        }
+        const tx = new blockchain_1.Transaction(state_1.State.myWalletAddress, req.body.to, transferAmount);
         tx.comment = req.body.comment;
         tx.signTransaction(state_1.State.myKey);
         state_1.State.chain.addTransaction(tx);
