@@ -15,7 +15,7 @@ export class Profile {
     }
     
     load(name: string) {
-        const path = this.getProfilePath();
+        const path = this.getProfilePath(name);
         if (!existsSync(path)) {
             this.create(name);
             return;
@@ -38,13 +38,13 @@ export class Profile {
             mkdirSync(Profile.dir + "\\" + this.name);
         }
 
-        writeFileSync(this.getProfilePath(), JSON.stringify({
+        writeFileSync(this.getProfilePath(this.name), JSON.stringify({
             name: this.name,
             key: this.key
         }), { encoding: "utf8" });
     }
 
-    private getProfilePath(): string {
-        return Profile.dir + "\\" + this.name + "\\profile";
+    private getProfilePath(name: string): string {
+        return Profile.dir + "\\" + name + "\\profile";
     }
 }
