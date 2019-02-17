@@ -8,8 +8,14 @@ export class Profile {
     key: string = "";
     private static dir = __dirname + "\\.profile";
 
+    constructor() {
+        if (!existsSync(Profile.dir)) {
+            mkdirSync(Profile.dir);
+        }
+    }
+    
     load(name: string) {
-        const path = Profile.dir + "\\" + name;
+        const path = this.getProfilePath();
         if (!existsSync(path)) {
             this.create(name);
             return;
@@ -28,13 +34,17 @@ export class Profile {
     }
 
     save() {
-        if (!existsSync(Profile.dir)) {
-            mkdirSync(Profile.dir);
+        if (!existsSync(Profile.dir + "\\" + this.name)) {
+            mkdirSync(Profile.dir + "\\" + this.name);
         }
 
-        writeFileSync(Profile.dir + "\\" + this.name, JSON.stringify({
+        writeFileSync(this.getProfilePath(), JSON.stringify({
             name: this.name,
             key: this.key
         }), { encoding: "utf8" });
+    }
+
+    private getProfilePath(): string {
+        return Profile.dir + "\\" + this.name + "\\profile";
     }
 }

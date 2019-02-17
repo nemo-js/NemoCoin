@@ -14,6 +14,9 @@ class UserInterfaceAPI {
     static getBalance(req, res) {
         res.send({ balance: state_1.State.chain.getBalanceOfAddress(state_1.State.myWalletAddress) });
     }
+    static getAddress(req, res) {
+        res.send({ address: state_1.State.myWalletAddress });
+    }
 }
 exports.UserInterfaceAPI = UserInterfaceAPI;
 //# sourceMappingURL=ui.js.map

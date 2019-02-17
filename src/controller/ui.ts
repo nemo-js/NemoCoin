@@ -19,4 +19,8 @@ export class UserInterfaceAPI {
         res.send({ balance: State.chain.getBalanceOfAddress(State.myWalletAddress) });
     }
 
+    static getAddress(req: Request, res: Response) {
+        res.send({ address: State.myWalletAddress });
+    }
+
 }

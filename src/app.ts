@@ -30,6 +30,7 @@ function connect(port: number) {
     app.post("/node/new", NemoCoinAPI.nodeJoined);
 
     app.get("/ui/balance", UserInterfaceAPI.getBalance);
+    app.get("/ui/address", UserInterfaceAPI.getAddress);
     app.post("/ui/money/transfer", UserInterfaceAPI.transferMoney);
 
     app.use((err: any, req: any, res: any, next: any) => {

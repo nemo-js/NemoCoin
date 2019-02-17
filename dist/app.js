@@ -24,6 +24,7 @@ function connect(port) {
     app.post("/transaction/add", api_1.NemoCoinAPI.addTransaction);
     app.post("/node/new", api_1.NemoCoinAPI.nodeJoined);
     app.get("/ui/balance", ui_1.UserInterfaceAPI.getBalance);
+    app.get("/ui/address", ui_1.UserInterfaceAPI.getAddress);
     app.post("/ui/money/transfer", ui_1.UserInterfaceAPI.transferMoney);
     app.use((err, req, res, next) => {
         console.error(err.stack);
