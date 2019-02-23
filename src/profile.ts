@@ -1,6 +1,7 @@
 const EC = require("elliptic").ec;
 const ec = new EC("secp256k1");
 import { existsSync, mkdirSync, writeFileSync, readFileSync } from "fs";
+import { Block } from "./blockchain";
 
 export class Profile {
 
@@ -44,7 +45,24 @@ export class Profile {
         }), { encoding: "utf8" });
     }
 
+    getBlockchain(): Block[] {
+        const path = this.getBlockchainPath();
+        if (!existsSync(path)) {
+            return [];
+        }
+
+        return JSON.parse(readFileSync(path, "utf8")) as Block[];
+    }
+
+    saveBlockChain(chain: Block[]) {
+        writeFileSync(this.getBlockchainPath(), JSON.stringify(chain), { encoding: "utf8" });
+    }
+
     private getProfilePath(name: string): string {
         return Profile.dir + "\\" + name + "\\profile";
+    }
+
+    private getBlockchainPath(): string {
+        return Profile.dir + "\\" + this.name + "\\blockchain";
     }
 }

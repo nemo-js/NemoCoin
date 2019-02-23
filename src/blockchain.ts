@@ -38,7 +38,7 @@ export class Transaction {
     }
 }
 
-class Block {
+export class Block {
 
     public hash: string;
     public timestamp: number;
@@ -77,20 +77,49 @@ class Block {
 }
 
 export class BlockChain {
+
     pendingTransactions: Transaction[];
     private chain: Block[];
     private difficulty = 2;
     private miningReward = this.difficulty * 10;
+    private eventListeners: { [event: string]: Function[] } = {};
 
-    constructor() {
-        this.chain = [this.createGenesisBlock()];
+    constructor(blocks: Block[]) {
+        this.chain = blocks == null || blocks.length == 0 
+            ? [this.createGenesisBlock()]
+            : blocks;
         this.pendingTransactions = [];
-        this.createGenesisBlock();
+        this.eventListeners = {
+            "mined": []
+        };
+    }
+
+    public on(eventName: string, listener: Function) {
+        if (eventName != "mined") {
+            throw new Error("Uknown event " + eventName);
+        }
+
+        this.eventListeners[eventName].push(listener);
+    }
+
+    private raiseEvent(eventName: string, args: any[]) {
+        if (this.eventListeners[eventName] == null) {
+            return;
+        }
+
+        const listeners = this.eventListeners[eventName];
+        for (const listener of listeners) {
+            listener(args);
+        }
     }
 
     private createGenesisBlock(): Block {
-        const block = new Block([new Transaction("", "", 0, "Genesis block")]);
-        block.timestamp = new Date().getTime();
+        console.log("Generating Genesis Block...")
+        const block = new Block([
+            new Transaction("", "", 0, "Genesis block"),
+            new Transaction("", "0486977bee867870adc99d9801bcefe1cd874891091d3cc352a37848ce778aaee60a57b5e99d760ffc2b96521614149524a792e4a882e7752bd3d2237d7f562aa7", 100, "Genesis block"),
+        ]);
+        block.timestamp = -1;
         block.hash = block.calculateHash();
         return block;
     }
@@ -139,6 +168,8 @@ export class BlockChain {
         console.log("Block succesfully mined");
 
         this.pendingTransactions = [];
+
+        this.raiseEvent("mined", [block]);
     }
 
     addTransaction(tx: Transaction) {
