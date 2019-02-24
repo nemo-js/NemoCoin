@@ -1,7 +1,5 @@
 import request from "request";
 
-// todo: make p2p network more clever (on broadcast skip already informed, dont remove nodes on first failure)
-
 export class P2P {
 
     private nodes: Neighbour[] = [];
@@ -10,7 +8,7 @@ export class P2P {
         
     }
 
-    addNode(addr: string, informOthers: boolean = true): any {
+    addNode(addr: string, informOthers: boolean = true, exclude: string[] = []): any {
         this.nodes = this.nodes.filter(n => n.isDown == false);
         
         if (addr == this.myAddr) {
@@ -29,7 +27,7 @@ export class P2P {
         this.nodes.push(new Neighbour(addr));
 
         if (informOthers === true) {
-            this.postToNeighbours(100, "/node/new", { addr: addr }, []);
+            this.postToNeighbours(100, "/node/new", { addr: addr }, exclude);
         }
     }
 
@@ -40,21 +38,44 @@ export class P2P {
     public postToNeighbours(count: number, path: string, data: any, exclude: string[]) {
         const upNodes = this.nodes.filter(n => n.isDown == false);
 
+        if (exclude == null) {
+            exclude = [];
+        }
+
+        exclude.push(this.myAddr);
+
+        const message: Message = {
+            header: {
+                excludeNodes: exclude
+            },
+            data: data
+        }
+
+        const nodesToSend: Neighbour[] = [];
+
         for (let i = 0; i < count; i++) {
             if (upNodes.length <= i) {
                 break;
             }
 
             const node = upNodes[i];
-            if (this.myAddr == node.address) {
+
+            if (exclude.indexOf(node.address) > -1) {
+                count++;
                 continue;
             }
 
-            if (exclude != null && exclude.indexOf(node.address) > -1) {
-                continue;
-            }
+            nodesToSend.push(node);
+        }
 
-            this.postToNeighbour(node, path, data)
+        message.header.excludeNodes.push(...nodesToSend.map(n => n.address));
+        message.header.excludeNodes =
+            message.header.excludeNodes.filter((value, index, self) => { 
+                return self.indexOf(value) === index;
+            });
+
+        for (const node of nodesToSend) {
+            this.postToNeighbour(node, path, message)
                 .catch(() => {
                     node.isDown = true;
                 });
@@ -87,4 +108,13 @@ class Neighbour {
     constructor(public address: string) {
 
     }
+}
+
+class Message {
+    header: MessageHeader = new MessageHeader();
+    data: any;
+}
+
+export class MessageHeader {
+    excludeNodes: string[] = [];
 }

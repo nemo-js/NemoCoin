@@ -14,7 +14,7 @@ export class UserInterfaceAPI {
         tx.signTransaction(State.myKey);
         State.chain.addTransaction(tx);
 
-        State.sendTransaction(tx);
+        State.sendTransaction(tx, []);
 
         res.send("ok");
     }

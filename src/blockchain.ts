@@ -182,6 +182,7 @@ export class BlockChain {
         }
 
         this.pendingTransactions.push(tx);
+        console.log("Added transaction!", tx.signature);
     }
 
     getBalanceOfAddress(addr: string): number {

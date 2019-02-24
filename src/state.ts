@@ -48,11 +48,11 @@ export class State {
         State.network.postToNeighbours(100, "/node/new", { addr: State.currentWebAddr }, []);
     }
 
-    static addNode(addr: string): any {
-        this.network.addNode(addr);
+    static addNode(addr: string, nodesToExlcude: string[]): any {
+        this.network.addNode(addr, true, nodesToExlcude);
     }
 
-    static sendTransaction(tx: Transaction): void {
+    static sendTransaction(tx: Transaction, nodesToExlcude: string[]): void {
         this.network.postToNeighbours(20, "/transaction/add", {
             from: tx.from,
             to: tx.to,
@@ -60,6 +60,6 @@ export class State {
             comment: tx.comment,
             signature: tx.signature,
             timestamp: tx.timestamp
-        }, []);
+        }, nodesToExlcude);
     }
 }
