@@ -55,7 +55,7 @@ export class Profile {
     }
 
     saveBlockChain(chain: Block[]) {
-        writeFileSync(this.getBlockchainPath(), JSON.stringify(chain), { encoding: "utf8" });
+        writeFileSync(this.getBlockchainPath(), JSON.stringify(chain, null, 4), { encoding: "utf8" });
     }
 
     private getProfilePath(name: string): string {

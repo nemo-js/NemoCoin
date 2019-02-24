@@ -20,7 +20,7 @@ export class State {
         this.profile.load(profileName);
         this.chain = new BlockChain(this.profile.getBlockchain());
         this.chain.on("mined", (args: any[]) => {
-            this.profile.saveBlockChain(this.profile.getBlockchain());
+            this.profile.saveBlockChain(this.chain.getBlockChain());
         });
         this.profile.saveBlockChain(this.chain.getBlockChain())
         this.myKey = this.keyGen.keyFromPrivate(this.profile.key);

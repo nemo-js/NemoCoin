@@ -165,10 +165,9 @@ export class BlockChain {
         block.mineBlock(this.difficulty);
 
         this.chain.push(block);
-        console.log("Block succesfully mined");
-
         this.pendingTransactions = [];
 
+        console.log("Block succesfully mined");
         this.raiseEvent("mined", [block]);
     }
 
