@@ -17,7 +17,7 @@ function parseArguments(): { [key: string]: any } {
     return args;
 }
 
-function connect(port: number) {
+function connect(user: string, port: number) {
     const app = express();
 
     app.set("port", port);
@@ -41,10 +41,10 @@ function connect(port: number) {
     });
 
     app.listen(app.get("port"), () => {
-        console.log(
-            "  App is running at http://localhost:%d in %s mode",
+        console.log("  App is running at http://localhost:%d in %s mode. User %s",
             app.get("port"),
-            app.get("env")
+            app.get("env"),
+            user
         );
     });
 }
@@ -57,15 +57,17 @@ function init() {
         port = 3000;
     }
 
-    if (args["-u"] == null) {
+    const user = args["-u"];
+
+    if (user == null) {
         console.log("Select a profile with -u argument");
         process.exit();
     }
 
     const myAddr = "http://localhost:" + port;
-    State.init(args["-u"], myAddr);
+    State.init(user, myAddr);
 
-    connect(port);
+    connect(user, port);
 
     State.joinNetwork();
 }
